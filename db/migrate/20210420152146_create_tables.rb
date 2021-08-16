@@ -45,6 +45,7 @@ class CreateTables < ActiveRecord::Migration[6.0]
       t.integer :user_id
       t.text :title
       t.text :author
+      t.text :genre
       t.text :description
     
       t.timestamps
@@ -64,14 +65,14 @@ class CreateTables < ActiveRecord::Migration[6.0]
     add_index :reviews, :user_id
     
 
-    create_table :friendships do |t|
+    create_table :followers do |t|
       t.references :user, index: true, null: false, foreign_key: true
-      t.integer :friend_id, null: false
+      t.integer :follower_id, null: false
       t.boolean :confirmed
 
       t.timestamps
     end
-    add_foreign_key :friendships, :users, column: :friend_id, foreign_key: true
+    add_foreign_key :followers, :users, column: :follower_id, foreign_key: true
 
 
   end
