@@ -45,5 +45,15 @@ class CreateTables < ActiveRecord::Migration[6.0]
     add_index :users, :username,             unique: true
     add_index :users, :reset_password_token, unique: true
 
+
+    create_table :books do |t|
+      t.integer :user_id
+      t.text :content
+    
+      t.timestamps
+    end
+
+    add_index :books, :user_id
+
   end
 end
