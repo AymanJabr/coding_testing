@@ -25,8 +25,8 @@ class CreateTables < ActiveRecord::Migration[6.0]
 
 
     create_table :users do |t|
-      t.string :email,              null: false, default: ""
-      t.string :username,              null: false, default: ""
+      t.string :email, null: false, default: ""
+      t.string :username, null: false, default: ""
 
       # The few lines below are used by devise
       t.string :encrypted_password, null: false, default: ""
@@ -42,7 +42,6 @@ class CreateTables < ActiveRecord::Migration[6.0]
 
 
     create_table :books do |t|
-      t.integer :user_id
       t.text :title
       t.text :author
       t.text :genre
@@ -50,7 +49,6 @@ class CreateTables < ActiveRecord::Migration[6.0]
     
       t.timestamps
     end
-    add_index :books, :user_id
 
 
     create_table :reviews do |t|
@@ -63,16 +61,18 @@ class CreateTables < ActiveRecord::Migration[6.0]
     end
     add_index :reviews, :book_id
     add_index :reviews, :user_id
+    add_index :reviews, [:book_id, :user_id], unique: true
     
 
-    create_table :followers do |t|
-      t.references :user, index: true, null: false, foreign_key: true
+    create_table :follows do |t|
       t.integer :follower_id, null: false
-      t.boolean :confirmed
+      t.integer :followed_user_id, null: false
 
       t.timestamps
     end
-    add_foreign_key :followers, :users, column: :follower_id, foreign_key: true
+    add_index :reviews, :follower_id
+    add_index :reviews, :followed_user_id
+    add_index :reviews, [:follower_id, :followed_user_id], unique: true
 
 
   end

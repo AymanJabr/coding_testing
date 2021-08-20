@@ -2,58 +2,13 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  validates :name, presence: true, length: { maximum: 20 }
+  validates :username, presence: true, length: { maximum:20 }
+ 
+  has_many :reviews, dependent: :destroy
 
-  has_many :posts
-  has_many :comments, dependent: :destroy
-  has_many :likes, dependent: :destroy
+  has_many :received_follows, foreign_key: :followed_user_id, class_name: "Follow"
+  has_many :followers, through: :received_follows, source: :follower
 
-  has_many :friendships
-  has_many :inverse_friendships, class_name: 'Friendship', foreign_key: 'friend_id'
-
-  has_many :confirmed_friendships, -> { where confirmed: true }, class_name: 'Friendship'
-  has_many :pending_friendships, -> { where confirmed: false }, class_name: 'Friendship'
-  has_many :friends, through: :confirmed_friendships
-
-
-#  Methods below are used to set the friendship status of users
-  def pending_friends
-    friendships.map { |friendship| friendship.friend unless friendship.confirmed }.compact
-  end
-
-  def friend_requests
-    inverse_friendships.map { |friendship| friendship.user unless friendship.confirmed }.compact
-  end
-
-  def confirm_friend(user)
-    friendship = inverse_friendships.find { |friendship| friendship.user == user }
-    friendship.confirmed = true
-    friendship.save
-  end
-
-  def reject_friend(user)
-    friendship = inverse_friendships.find { |friendship| friendship.user == user }
-    friendship.confirmed = false
-    friendship.save
-  end
-
-  def remove_friend(user)
-    reject_friend(user)
-  end
-
-  def send_friend_request(user)
-    friendship = inverse_friendships.find { |friendship| friendship.user == user }
-    friendship.status = 'pending'
-    friendship.save
-  end
-
-  def get_friend_request(user)
-    friendship = inverse_friendships.find { |friendship| friendship.user == user }
-    friendship.status = 'to_confirm'
-    friendship.save
-  end
-
-  def friend?(user)
-    friends.include?(user)
-  end
+  has_many :given_follows, foreign_key: :follower_id, class_name: "Follow"
+  has_many :followings, through: :given_follows, source: :followed_user
 end
