@@ -77,6 +77,3 @@ class CreateTables < ActiveRecord::Migration[6.0]
 
   end
 end
-
-
-add_reference :books, :author, null: false, foreign_key: true
