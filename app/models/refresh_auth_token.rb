@@ -4,14 +4,4 @@ class RefreshAuthToken < ApplicationRecord
   belongs_to :identical, polymorphic: true
 
 
-
-
-
-
-
-
-
-
-
-
 end
