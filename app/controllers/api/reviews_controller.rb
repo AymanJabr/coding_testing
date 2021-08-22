@@ -1,13 +1,15 @@
-class ReviewsController < ApplicationController
+module Api
+  class ReviewsController < ApplicationController
 
     def index
-      @reviews = Review.all
+      reviews = Review.all
+      search_term = params[:search]
+      search_by_title(reviews, search_term)
 
-      respond_to do |format|
-        format.html # index.html.erb
-        format.xml  { render :xml => @reviews }
-        format.json { render :json => @reviews }
-      end
+      render json: ReviewsRepresenter.new(reviews).as_json
     end
 
+
+
   end
+end
